@@ -17,25 +17,63 @@
 
   <script type="module">
     import * as THREE from "three";
-    let scene, camera, renderer;
+    let scene, camera, renderer, sphere, planetMesh;
+    let ADD = 0.02;
 
     // set up the environment -
     // initiallize scene, camera, objects and renderer
 
+  // createPlanet function to create a smaller planet
+  let createPlanet = function () {
+      const geometry = new THREE.SphereGeometry(2, 22, 16);
+      const material = new THREE.MeshLambertMaterial({
+        color: 0xffff00,
+        wireframe: true,
+      });
+      planetMesh = new THREE.Mesh(geometry, material);
+      scene.add(planetMesh);
+      planetMesh.position.x = 15;
+    };
+
+   let planet = function() { const geometry = new THREE.SphereGeometry(5, 22, 16);
+    const material = new THREE.MeshLambertMaterial({
+      color: 0xffff00,
+      wireframe: true,
+    });
+    sphere = new THREE.Mesh(geometry, material);
+    scene.add(sphere);
+    console.log(sphere);
+    sphere.position.x = -15;
+};
+
+    let py = function() {
+        const geometry = new THREE.ConeGeometry( 5, 30, 30, 40 ); 
+const material = new THREE.MeshPhongMaterial( {color: 0xfe3b1f, wireframe: true} );
+const cone = new THREE.Mesh(geometry, material ); 
+scene.add( cone );
+    }
+
     let init = function () {
       // create the scene
       scene = new THREE.Scene();
-      scene.background = new THREE.Color(0xababab);
+      scene.background = new THREE.Color(0x5baa9e);
 
       // create an locate the camera
-
       camera = new THREE.PerspectiveCamera(
-        30,
+        75,
         window.innerWidth / window.innerHeight,
         1,
         1000
       );
-      camera.position.z = 5;
+      camera.position.z = 20;
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+      scene.add(directionalLight);
+
+      createPlanet();
+    planet();
+    py();
+      
 
       // create the renderer
       renderer = new THREE.WebGLRenderer();
@@ -47,6 +85,9 @@
     // main animation loop - calls 50-60 in a second.
     let mainLoop = function () {
       console.log("Hello");
+      console.log("sphere: ",sphere, "planetMesh ",planetMesh)
+      sphere.rotation.y += ADD;
+      planetMesh.rotation.y += ADD;
       renderer.render(scene, camera);
       requestAnimationFrame(mainLoop);
     };
